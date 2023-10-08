@@ -9,7 +9,8 @@ class solarStatus {
     public $source              = 'https://services.swpc.noaa.gov/text/sgarf.txt';
     // Esta fuente de datos contiene las alertas de eventos solares, pero no se utiliza en este script (por ahora)
     // Origen explicación: https://www.swpc.noaa.gov/products/alerts-watches-and-warnings
-    public $source_alerts       = 'https://services.swpc.noaa.gov/products/alerts.json';
+    public $cache_file_alerts = 'solar_source_alerts_data.json';
+    public $source_alerts     = 'https://services.swpc.noaa.gov/products/alerts.json';
     // Predicicón de actividad del ciclo solar futuro
     // Origen explicación: https://www.swpc.noaa.gov/products/predicted-sunspot-number-and-radio-flux
     public $cache_file_solar_cycle = 'solar_cycle_data.json';
@@ -18,6 +19,7 @@ class solarStatus {
     // Datos de la prevision solar
     public $solar_data_activity;
     public $solar_cycle_data;
+    public $solar_alerts_data;
 
     function __construct () {
 
@@ -239,5 +241,112 @@ class solarStatus {
         }
 
         return $this->solar_cycle_data;
+    }
+
+
+
+
+    function get_cache_file_alerts () {
+
+        return __DIR__.'/'.$this->cache_file_alerts;
+    }
+
+    function load_cached_alerts_data () {
+
+        if ($this->mode_debbug) { return; }
+
+        if (empty($this->solar_alerts_data)) {
+
+            $file_path    = $this->get_cache_file_alerts();
+            $file_content = (file_exists($file_path) ? file_get_contents($file_path) : '');
+
+            if (!empty($file_content)) { $this->solar_alerts_data = json_decode($file_content, true); }
+        }
+    }
+
+    function save_cached_alerts_data () {
+
+        $file_content = json_encode($this->solar_alerts_data);
+
+        if (!empty($file_content)) { file_put_contents($this->get_cache_file_alerts(), $file_content); }
+    }
+
+    function get_alerts ($from_date = null, $to_date = null) {
+
+        $this->load_cached_alerts_data($from_date, $to_date);
+
+        if (       empty($this->solar_alerts_data)
+            or strtotime($this->solar_alerts_data['date_last_updated']) > strtotime('-1 day')) {
+
+            $from_timestamp = (!empty($from_date) ? strtotime(is_numeric($from_date) ? date('Y-m-d h:i:s', $from_date) : $from_date) : strtotime('yesterday'));
+            $to_timestamp   = (!empty($to_date)   ? strtotime(is_numeric($to_date)   ? date('Y-m-d h:i:s', $to_date)   : $to_date)   : strtotime('tomorrow'));
+            $file_content   = file_get_contents($this->source_alerts);
+            $data_alers     = json_decode($file_content, true);
+
+            $this->solar_alerts_data['date_last_updated'] = date('Y-m-d H:i:s');
+            $this->solar_alerts_data['original_data']     = $data_alers;
+
+            $this->save_cached_alerts_data();
+        }
+
+        $alerts = [];
+
+        foreach ($this->solar_alerts_data['original_data'] as $alert) {
+
+            $product_id = $alert['product_id'];
+            $datetime   = $alert['issue_datetime'];
+            $timestamp  = strtotime($datetime);
+
+            if ($timestamp < $from_timestamp or $timestamp > $to_timestamp) { continue; }
+
+            // Protege forato de fecha "Oct 07:"
+            $alert['message'] = preg_replace("/([\n\r]*[a-z]{3}\s+\d+):/is", '\\1=', $alert['message']);
+            // Escapa formato "Título: texto"
+            $alert['message'] = preg_replace("/([^:]+:)[\n\r]*/s",  '\\1',    $alert['message']);
+            $alert['message'] = preg_replace("/[\n\r]+([^:]+\:)/s",  '|\\1',  $alert['message']);
+            $alert['message'] = preg_replace("/[\n\r]+/s",               '|', $alert['message']);
+            $alert['message'] = preg_replace("/\|([^:]+)\|/s", '|Info: \\1|', $alert['message']);
+            $alert['message'] = preg_replace("/\|([^:]+)$/s",  '|Info: \\1',  $alert['message']);
+            $alert['message'] = preg_replace("/\|([^:]+\|)/s",       ' \\1',  $alert['message']);
+            $alert['message'] = preg_replace("/\|([^:]+)$/s",        ' \\1',  $alert['message']);
+            $alert['message'] = preg_replace("/\|([^:]+)$/s",        ' \\1',  $alert['message']);
+
+            preg_match_all('/(([^:]+):\s*([^\|]+)\|*)/s', $alert['message'], $matches, PREG_SET_ORDER);
+
+            if (empty($matches)) { continue; }
+
+            $message = [];
+
+            foreach ($matches as $match) {
+
+                $key = str_replace([' ', '-', '.'], '_', strtolower($match[2]));
+
+                if (strpos($key, '|') !== false) {
+
+                    $key = preg_replace('/^[^\|]+\|/', '', $key);
+
+                    if (!$key) { continue; }
+                }
+
+                // Detecta el texto del tipo de alerta porque está en mayúsculas todo
+                if ($match[2] ===  mb_strtoupper($match[2])) {
+
+                    $key                   = 'alert_description';
+                    $message['alert_type'] = $match[2];
+                }
+
+                $message[$key] = (!empty($message[$key]) ? $message[$key]."\n\r" :  '').trim($match[3]);
+            }
+
+            $alerts[] = [
+
+                'datetime'   => $datetime,
+                'timestamp'  => $timestamp,
+                'product_id' => $product_id,
+                'message'    => $message,
+            ];
+        }
+
+        return $alerts;
     }
 }

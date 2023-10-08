@@ -1,0 +1,35 @@
+*{box-sizing:border-box;border:0;outline:0;font-family:-apple-system,BlinkMacSystemFont,Roboto,"Segoe UI","Helvetica Neue",Arial;max-width:100%;line-height:1.4}
+BODY{grid-template-columns:1fr;justify-self:center;align-self:center;grid-template-areas:"header" "main" "footer"}
+HEADER{grid-area:header}MAIN{grid-area:main}FOOTER{grid-area:footer}
+BODY,H1,H2,H3,H4,UL{margin:0}
+A,A:visited,A:hover{text-decoration:none}
+SVG{fill:currentColor}
+.none{display:none}
+.contenido{margin:0 auto;max-width:var(--AnchoContenido);padding:5% var(--espaciox2)}
+.t15{font-size:1.5rem}.t14{font-size:1.4rem}..t13{font-size:1.3rem}.t12{font-size:1.2rem}
+.t09{font-size:.9rem}.t08{font-size:.8rem}.t07{font-size:.7rem}
+.cBlanco{color:#FFF}
+BODY{background:#000}
+BODY2{background:#000 url(https://api.solarsentry.earth/solar/imagenes/pantalla.png) center center fixed}
+MAIN{display:flex;flex-direction:column}
+footer{position: absolute;bottom: 0;width: 100%;}
+h1{font-size:3rem;color:#FFF;text-shadow:1px 1px 10px black;display:block;text-align: center;padding-bottom: 30px}
+.copyright{position:fixed;bottom:15px;color:#FFF;font-size:10px;font-weight:100;letter-spacing:.5px}
+
+
+.capa_sol{display: flex;justify-content: center;position:relative;flex-direction: column;align-items: center;height:290px;color:#FFF}
+.capa_sol video{position: absolute;top: 0;z-index: -1;}
+.capa_sol_futuro{display:grid;grid-template-columns: 80px auto;}
+.capa_sol__datos{justify-content: center;display: flex; flex-direction: column; align-items: center; z-index: 1;width: 98dvw;}
+.peligrosidad,.manchas,.velocidad{background: rgb(0 0 0 / 50%);padding:4px 8px;text-align:center;margin-bottom:10px;border-radius:4px}
+.capa_redes_sociales{display: flex;flex-direction: row;justify-content: space-around;padding: 6px 16px;color:#FFF}
+.capa_redes_sociales a{color:#fff;;display: contents;}
+
+.capa_boton_foto_sol{position: relative;}
+.capa_boton_foto_sol INPUT{display:block;opacity:0;position: absolute;}
+
+.capa_coordenadas{display: flex;align-items: center;flex-direction: row;justify-content: center;padding: 0 15px;}
+.capa_coordenadas div{padding:0 3px}
+/*FILTROS*/
+.azul{filter: hue-rotate(16deg);}
+.rojo{filter:hue-rotate(329deg)}

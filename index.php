@@ -38,8 +38,8 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link rel="stylesheet" href="estilos.css" />
 <style>
-
-</style></head>
+</style>
+</head>
 <body>
 <header></header>
 <main>
@@ -70,6 +70,8 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
 </script>
 </main>
 <footer>
+<div class=" cBlanco t15" style="text-align:center">
+    </div>
     <div class="capa_coordenadas cBlanco t07">
         <div><span id="latitud"></span></div>
         <div><span id="longitud"></span></div>

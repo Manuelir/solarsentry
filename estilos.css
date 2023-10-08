@@ -6,7 +6,8 @@ A,A:visited,A:hover{text-decoration:none}
 SVG{fill:currentColor}
 .none{display:none}
 .contenido{margin:0 auto;max-width:var(--AnchoContenido);padding:5% var(--espaciox2)}
-.t15{font-size:1.5rem}.t14{font-size:1.4rem}..t13{font-size:1.3rem}.t12{font-size:1.2rem}
+.t20{font-size:2rem}.t15{font-size:1.5rem}.t14{font-size:1.4rem}..t13{font-size:1.3rem}.t12{font-size:1.2rem}
+
 .t09{font-size:.9rem}.t08{font-size:.8rem}.t07{font-size:.7rem}
 .cBlanco{color:#FFF}
 BODY{background:#000}
@@ -17,7 +18,7 @@ h1{font-size:3rem;color:#FFF;text-shadow:1px 1px 10px black;display:block;text-a
 .copyright{position:fixed;bottom:15px;color:#FFF;font-size:10px;font-weight:100;letter-spacing:.5px}
 
 
-.capa_sol{display: flex;justify-content: center;position:relative;flex-direction: column;align-items: center;height:290px;color:#FFF}
+.capa_sol{display: flex;justify-content: center;position:relative;flex-direction: column;align-items: center;height:80vh;color:#FFF}
 .capa_sol video{position: absolute;top: 0;z-index: -1;}
 .capa_sol_futuro{display:grid;grid-template-columns: 80px auto;}
 .capa_sol__datos{justify-content: center;display: flex; flex-direction: column; align-items: center; z-index: 1;width: 98dvw;}
@@ -31,5 +32,5 @@ h1{font-size:3rem;color:#FFF;text-shadow:1px 1px 10px black;display:block;text-a
 .capa_coordenadas{display: flex;align-items: center;flex-direction: row;justify-content: center;padding: 0 15px;}
 .capa_coordenadas div{padding:0 3px}
 /*FILTROS*/
-.azul{filter: hue-rotate(16deg);}
-.rojo{filter:hue-rotate(329deg)}
+.g1{filter: hue-rotate(16deg);}
+.g4, .g5{filter:hue-rotate(329deg)}

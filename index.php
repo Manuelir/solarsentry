@@ -8,25 +8,25 @@ $solarInfo = $solarStatus->get_activity();
 
 $solarCycle = $solarStatus->get_solar_cycle();
 
-$estileDangerLevel = "G1";
+$styleDangerLevel = "g1";
 switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
     case "extreme":
-        $estileDangerLevel = "G5";
+        $styleDangerLevel = "g5";
         break;
     case "severe":
-        $estileDangerLevel = "G4";
+        $styleDangerLevel = "g4";
         break;
     case "strong":
-        $estileDangerLevel = "G3";
+        $styleDangerLevel = "g3";
         break;
     case "moderate":
-        $estileDangerLevel = "G2";
+        $styleDangerLevel = "g2";
         break;
     case "minor":
     case "low":
         break;
     default:
-        $estileDangerLevel = "G1";
+        $styleDangerLevel = "g1";
 }
 
 ?>
@@ -45,28 +45,23 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
 <main>
 	<h1>Solar Centry</h1>
     <div class="capa_sol">
-        <video src="sol.mp4" autoplay="true" muted="true" loop="true"></video>
+        <video src="sol.mp4" autoplay="true" muted="true" loop="true" class="<?php echo $styleDangerLevel;?>"></video>
         <div class="capa_sol__datos">
             <div class="velocidad">
-                <div class="t07">Solar wind speed</div>
-                <div class="t15"><?php echo $solarInfo['solar_wind_speed']['speed']; ?> Km/h</div>
+                <div >Solar wind speed</div>
+                <div class="t20"><?php echo $solarInfo['solar_wind_speed']['speed']; ?> Km/h</div>
             </div>
             <div class="manchas">
-                <div class="t07">Sunspots</div><div class="t13"></div>
-                <div class="t15"><?php echo  $solarInfo['number_sunspot_regions'];?></div>
+                <div>Sunspots</div><div class="t13"></div>
+                <div class="t20"><?php echo  $solarInfo['number_sunspot_regions'];?></div>
             </div>
             <div class="peligrosidad">
-                <div class="t07">Danger level</div>
-                <div class="t15 <?php echo $estileDangerLevel;?>"><?php echo $solarInfo['solar_activity_last_24_hours'] ?></div>
+                <div>Danger level</div>
+                <div class="t20"><?php echo $solarInfo['solar_activity_last_24_hours'] ?></div>
             </div>
         </div>
     </div>
 
-    <div class="capa_sol_futuro">
-        <div><video src="sol.mp4" autoplay="true" muted="true" loop="true" class="rojo"></video></div>
-        <div class="cBlanco">Intensidad futura</div>
-    </div>
-   
     
     
 <script>

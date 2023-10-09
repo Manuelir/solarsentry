@@ -49,7 +49,7 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
         <div class="capa_sol__datos">
             <div class="velocidad">
                 <div >Solar wind speed</div>
-                <div class="t20"><?php echo $solarInfo['solar_wind_speed']['speed']; ?> Km/h</div>
+                <div class="t20"><?php echo $solarInfo['solar_wind_speed']['speed']; ?> km/s</div>
             </div>
             <div class="manchas">
                 <div>Sunspots</div><div class="t13"></div>

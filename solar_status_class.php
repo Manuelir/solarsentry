@@ -53,7 +53,7 @@ class solarStatus {
         $this->load_cached_solar_data_activity();
 
         if (       empty($this->solar_data_activity)
-            or strtotime($this->solar_data_activity['date_last_updated']) > strtotime('-1 day')) {
+            or strtotime($this->solar_data_activity['date_last_updated']) < strtotime('-1 day')) {
 
             $file_content = file_get_contents($this->source);
             $file_content = preg_replace("/[\n\r]+/s", ' ', $file_content);
@@ -243,9 +243,6 @@ class solarStatus {
         return $this->solar_cycle_data;
     }
 
-
-
-
     function get_cache_file_alerts () {
 
         return __DIR__.'/'.$this->cache_file_alerts;
@@ -276,7 +273,7 @@ class solarStatus {
         $this->load_cached_alerts_data($from_date, $to_date);
 
         if (       empty($this->solar_alerts_data)
-            or strtotime($this->solar_alerts_data['date_last_updated']) > strtotime('-1 day')) {
+            or strtotime($this->solar_alerts_data['date_last_updated']) < strtotime('-1 day')) {
 
             $from_timestamp = (!empty($from_date) ? strtotime(is_numeric($from_date) ? date('Y-m-d h:i:s', $from_date) : $from_date) : strtotime('yesterday'));
             $to_timestamp   = (!empty($to_date)   ? strtotime(is_numeric($to_date)   ? date('Y-m-d h:i:s', $to_date)   : $to_date)   : strtotime('tomorrow'));

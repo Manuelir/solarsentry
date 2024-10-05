@@ -16,7 +16,7 @@ class solarStatus {
     public $cache_file_solar_cycle = 'solar_cycle_data.json';
     public $source_solar_cycle     = 'https://services.swpc.noaa.gov/json/solar-cycle/predicted-solar-cycle.json';
     //
-    public $cache_file_solar_images = 'solar_imges_data.json';
+    public $cache_file_solar_images = 'solar_images_data.json';
     public $source_solar_images     = 'https://sdo.gsfc.nasa.gov/assets/img/browse/';
 
     // Datos de la prevision solar

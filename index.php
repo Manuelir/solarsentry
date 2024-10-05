@@ -4,9 +4,9 @@ require __DIR__.'/solar_status_class.php';
 
 $solarStatus = new solarStatus();
 
-$solarInfo = $solarStatus->get_activity();
-
-$solarCycle = $solarStatus->get_solar_cycle();
+$solarInfo   = $solarStatus->get_activity();
+$solarCycle  = $solarStatus->get_solar_cycle();
+$solarImages = $solarStatus->get_solar_images('last', 'last', 'last','last', '0171', 512);
 
 $styleDangerLevel = "g1";
 switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
@@ -34,18 +34,24 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Solar Centry</title><meta charset="utf-8"><meta name="robots" content="index,follow"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=2.0">
+<title>Solar Sentry</title><meta charset="utf-8">
+<meta name="robots" content="index,follow">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=2.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link rel="stylesheet" href="estilos.css" />
+<link rel="stylesheet" href="styles/styles.css" />
 <style>
 </style>
 </head>
 <body>
 <header></header>
 <main>
-	<h1>Solar Centry</h1>
+	<h1>Solar Sentry</h1>
     <div class="capa_sol">
-        <video src="sol.mp4" autoplay="true" muted="true" loop="true" class="<?php echo $styleDangerLevel;?>"></video>
+        <?php if (!empty($solarImages['image'])) { ?>
+            <img src="<?php echo $solarImages['image'] ?>" class="back_sol" />
+        <?php } else { ?>
+            <video src="sol.mp4" autoplay="true" muted="true" loop="true" class="<?php echo $styleDangerLevel;?>"></video>
+        <?php } ?>
         <div class="capa_sol__datos">
             <div class="velocidad">
                 <div >Solar wind speed</div>
@@ -62,12 +68,6 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
         </div>
     </div>
 
-    
-    
-<script>
-
-
-</script>
 </main>
 <footer>
 <div class=" cBlanco t15" style="text-align:center">
@@ -77,7 +77,7 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
         <div><span id="longitud"></span></div>
     </div>
     <div class="capa_redes_sociales">
-		<a href="https://www.facebook.com/profile.php?id=61551907422460" title="Facebook" target="_blank" rel="noopener nofollow"><svg width="30px" height="30px" aria-hidden="true" role="img" viewBox="0 0 512 512"><use href="#icono-facebook"/></svg></a>	
+		<a href="https://www.facebook.com/profile.php?id=61551907422460" title="Facebook" target="_blank" rel="noopener nofollow"><svg width="30px" height="30px" aria-hidden="true" role="img" viewBox="0 0 512 512"><use href="#icono-facebook"/></svg></a>
 		<a href="https://twitter.com/PruebaRanaSpace" title="Twitter" target="_blank" rel="noopener nofollow"><svg width="30px" height="30px" aria-hidden="true" role="img" viewBox="0 0 512 512"><use href="#icono-twitter"/></svg></a>
 		<a href="https://www.instagram.com/solar.sentry.app/" title="Instagram" target="_blank" rel="noopener nofollow"><svg width="30px" height="30px" aria-hidden="true" role="img" viewBox="0 0 448 512"><use href="#icono-instagram"/></svg></a>
         <a href="https://www.tiktok.com/@solarsentry" title="Tiktok" target="_blank" rel="noopener nofollow"><svg width="30px" height="30px" aria-hidden="true" role="img" viewBox="0 0 291.72499821636245 291.1"><use href="#icono-tiktok"/></svg></a>
@@ -86,7 +86,7 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
 		<div class="capa_boton_foto_sol" style="position:relative">
           <input type="file" accept="image/*" capture="user"><div>Take a photo of the sun</div>
         </div>
-        
+
 	</div>
 </footer>
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="none">
@@ -98,9 +98,9 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
 		<g id="icono-tiktok"><path fill="currentColor" d="M180.29 182.87V107.1a88.505 88.505 0 0 0 51.76 16.58V94.84a51.73 51.73 0 0 1-28.26-16.58 51.634 51.634 0 0 1-22.71-33.89h-27.25v149.24c-.71 17.27-15.27 30.69-32.54 29.99a31.278 31.278 0 0 1-24.06-12.9c-15.29-8.05-21.16-26.97-13.11-42.26a31.274 31.274 0 0 1 27.53-16.71c3.13.03 6.24.51 9.23 1.44V123.9c-37.74.64-67.82 32.19-67.18 69.93a68.353 68.353 0 0 0 18.73 45.86 67.834 67.834 0 0 0 39.29 11.61c37.82-.01 68.49-30.62 68.57-68.43z"/></g>
 	</defs>
 </svg>
-<script type="text/javascript" src="geolocalizacion.js" charset="UTF-8"></script>
-<script type="text/javascript" src="compartir.js" charset="UTF-8"></script>
-<script type="text/javascript" src="lanzar_camara.js" charset="UTF-8"></script>
+<script type="text/javascript" src="scripts/geolocalizacion.js" charset="UTF-8"></script>
+<script type="text/javascript" src="scripts/compartir.js" charset="UTF-8"></script>
+<script type="text/javascript" src="scripts/lanzar_camara.js" charset="UTF-8"></script>
 
 </body>
 </html>

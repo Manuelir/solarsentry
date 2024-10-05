@@ -4,19 +4,19 @@ class solarStatus {
 
     public $mode_debbug = false;
 
-    public $cache_file_activity = 'solar_data_activity.json';
+    public $cache_file_activity = 'cache/solar_data_activity.json';
     // Orígen explicación: https://www.swpc.noaa.gov/products/report-and-forecast-solar-and-geophysical-activity#:~:text=Geophysical%20Activity%20Summary%2027%2F2100Z%20to,MeV%20at%20geosynchronous%20orbit
     public $source              = 'https://services.swpc.noaa.gov/text/sgarf.txt';
     // Esta fuente de datos contiene las alertas de eventos solares, pero no se utiliza en este script (por ahora)
     // Origen explicación: https://www.swpc.noaa.gov/products/alerts-watches-and-warnings
-    public $cache_file_alerts = 'solar_source_alerts_data.json';
+    public $cache_file_alerts = 'cache/solar_source_alerts_data.json';
     public $source_alerts     = 'https://services.swpc.noaa.gov/products/alerts.json';
     // Predicicón de actividad del ciclo solar futuro
     // Origen explicación: https://www.swpc.noaa.gov/products/predicted-sunspot-number-and-radio-flux
-    public $cache_file_solar_cycle = 'solar_cycle_data.json';
+    public $cache_file_solar_cycle = 'cache/solar_cycle_data.json';
     public $source_solar_cycle     = 'https://services.swpc.noaa.gov/json/solar-cycle/predicted-solar-cycle.json';
     //
-    public $cache_file_solar_images = 'solar_images_data.json';
+    public $cache_file_solar_images = 'cache/solar_images_data.json';
     public $source_solar_images     = 'https://sdo.gsfc.nasa.gov/assets/img/browse/';
 
     // Datos de la prevision solar

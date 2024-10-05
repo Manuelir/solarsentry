@@ -6,7 +6,7 @@ A,A:visited,A:hover{text-decoration:none}
 SVG{fill:currentColor}
 .none{display:none}
 .contenido{margin:0 auto;max-width:var(--AnchoContenido);padding:5% var(--espaciox2)}
-.t20{font-size:2rem}.t15{font-size:1.5rem}.t14{font-size:1.4rem}..t13{font-size:1.3rem}.t12{font-size:1.2rem}
+.t20{font-size:2rem}.t15{font-size:1.5rem}.t14{font-size:1.4rem}.t13{font-size:1.3rem}.t12{font-size:1.2rem}
 
 .t09{font-size:.9rem}.t08{font-size:.8rem}.t07{font-size:.7rem}
 .cBlanco{color:#FFF}
@@ -34,6 +34,7 @@ h1{font-size:3rem;color:#FFF;text-shadow:1px 1px 10px black;display:block;text-a
 /*FILTROS*/
 .g1{filter: hue-rotate(16deg);}
 .g4, .g5{filter:hue-rotate(329deg)}
-.back_sol { position: absolute; top: 50%; left: 50%; width: 1024px; height: auto; margin-left: -512px; margin-top: -512px; z-index: -1; }
+.back_sol { position: absolute; }
+.back_tierra { position: absolute; height: 20%; right: 10%; top: 10%;}
 .logo_header { display: flex; justify-content: center; align-items: center; }
 .logo_header img { padding-top: 40px; width: 500px; margin: 0 auto; }

@@ -48,7 +48,8 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
 	<h1 class="logo_header"><img src="images/solarsentry_logotexto_sombra.png" /></h1>
     <div class="capa_sol">
         <?php if (!empty($solarImages['image'])) { ?>
-            <img src="<?php echo $solarImages['image'] ?>" class="back_sol" />
+            <img src="<?php echo $solarImages['image'] ?>" class="back_sol" id="sol" />
+            <img onclick="intercambiarContenido()" src="./images/tierra_girando.gif" class="back_tierra" id="tierra" />
         <?php } else { ?>
             <video src="sol.mp4" autoplay="true" muted="true" loop="true" class="<?php echo $styleDangerLevel;?>"></video>
         <?php } ?>
@@ -67,6 +68,18 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
             </div>
         </div>
     </div>
+
+    <script>
+    function intercambiarContenido() {
+        console.log('hey')
+            const img1 = document.getElementById('sol');
+            const img2 = document.getElementById('tierra');
+            const tempSrc = img1.src;
+            img1.src = img2.src;
+            img1.style.height = '80%';
+            img2.src = tempSrc;
+    }
+    </script>
 
 </main>
 <footer>

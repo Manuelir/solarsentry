@@ -408,6 +408,7 @@ class solarStatus {
         if (!isset($this->solar_images_data) or !isset($this->solar_images_data['filters_list'])) {
             $this->get_solar_images();
         }
+        sort  ($this->solar_images_data['filters_list']);
 
         return $this->solar_images_data['filters_list'];
     }
@@ -419,6 +420,7 @@ class solarStatus {
         if (!isset($this->solar_images_data) or !isset($this->solar_images_data['resolutions_list'])) {
             $this->get_solar_images();
         }
+        sort  ($this->solar_images_data['resolutions_list']);
 
         return $this->solar_images_data['resolutions_list'];
     }

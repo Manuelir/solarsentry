@@ -503,8 +503,8 @@ class solarStatus {
             // Iterate over each link to identify image files
             foreach ($links as $link) {
 
-                $file_filter = '';
-                $href        = $link->getAttribute('href');
+                $$file_resolution = '';
+                $href = $link->getAttribute('href');
                 // Check if the file is an image (e.g., .jpg, .png)
                 if (preg_match('/\.(jpg|png)$/i', $href)) {
 
@@ -514,6 +514,7 @@ class solarStatus {
                             $file_resolution = $matches[1];
                             $file_filter     = $matches[2];
                             $this->solar_images_data[$mode][$file_resolution][$file_filter] = $href;
+                            if (!is_numeric($file_resolution)) { $file_resolution = ''; }
                         }
 
                     } else {
@@ -530,7 +531,7 @@ class solarStatus {
                         }
                     }
 
-                    if ($file_filter) {
+                    if ($file_resolution) {
                         // Add the filter and resolution to the list if they are not already there
                         if (!in_array($file_filter, $this->solar_images_data['filters_list'])) {
                             $this->solar_images_data['filters_list'][] = $file_filter;

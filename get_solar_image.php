@@ -15,4 +15,4 @@ $hour       = ($_GET['hour']       ?? 'last');
 $filter     = ($_GET['filter']     ?? '');
 $resolution = ($_GET['resolution'] ?? '');
 
-echo json_encode($solarStatus->get_solar_images ($year, $month, $day, $hour, $filter, $resolution));
+echo json_encode($solarStatus->get_solar_images($year, $month, $day, $hour, $filter, $resolution));

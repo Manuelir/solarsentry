@@ -505,7 +505,7 @@ class solarStatus {
             // Iterate over each link to identify image files
             foreach ($links as $link) {
 
-                $$file_resolution = '';
+                $file_resolution = '';
                 $href = $link->getAttribute('href');
                 // Check if the file is an image (e.g., .jpg, .png)
                 if (preg_match('/\.(jpg|png)$/i', $href)) {

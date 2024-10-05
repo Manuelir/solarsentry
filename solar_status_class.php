@@ -445,7 +445,7 @@ class solarStatus {
             // Modo íltima imagen disponible
             $mode = 'latest';
 
-            if (empty( $this->solar_images_data['date_last_updated']) or strtotime( $this->solar_images_data['date_last_updated']) <= strtotime('-1 hour')) {
+            if (empty($this->solar_images_data['date_last_updated']) or strtotime($this->solar_images_data['date_last_updated']) <= strtotime('-1 hour')) {
                 // Hay que actualizar las últimas imágenes cada hora
                 $refresh = true;
             }
@@ -601,5 +601,62 @@ class solarStatus {
         }
 
         return $images;
+    }
+
+    function get_earth_status () {
+
+        $this->get_activity();
+
+        // Crear un índice de coloración basado en las probabilidades
+        $color_index = [
+            'date_last_updated' => $this->solar_data_activity['date_last_updated'],
+            'source'            => $this->source,
+            'activity'          => [],
+        ];
+
+        // Calcular el índice de coloración
+        foreach ($this->solar_data_activity["geomagnetic_activity_probabilities"] as $lat_type => $data) {
+
+            for ($day = 1; $day <= 3; $day++) {
+
+                $activity_prob    = $data["active"]            ["day_$day"] ?? 0;
+                $minor_storm_prob = $data["minor_storm"]       ["day_$day"] ?? 0;
+                $major_storm_prob = $data["major_severe_storm"]["day_$day"] ?? 0;
+                // Calcular el nivel de riesgo promedio
+                $average_risk = round(($activity_prob * 1 / 3 + $minor_storm_prob * 2 / 3 + $major_storm_prob) * 2 / 3, 2);
+                list($color, $color_hexdec) = $this->determine_color($average_risk);
+
+                $color_index['activity'][$lat_type][] = [
+                    "day"          => $day,
+                    "average"      => $average_risk,
+                    "color"        => $color,
+                    "color_hexdec" => $color_hexdec
+                ];
+            }
+        }
+
+        return $color_index;
+    }
+
+    // Función para determinar el color basado en el nivel de riesgo
+    protected function determine_color ($probability) {
+
+        if ($probability <= 12.5) {
+            return ['lightgreen', '#90EE90']; // Muy baja peligrosidad
+        } elseif ($probability <= 25) {
+            return ['darkgreen', '#006400']; // Baja peligrosidad
+        } elseif ($probability <= 37.5) {
+            return ['lightyellow', '#FFFFE0']; // Media baja peligrosidad
+        } elseif ($probability <= 50) {
+            return ['darkyellow', '#FFD700']; // Media peligrosidad
+        } elseif ($probability <= 62.5) {
+            return ['lightorange', '#FFA07A']; // Alta baja peligrosidad
+        } elseif ($probability <= 75) {
+            return ['darkorange', '#FF8C00']; // Alta peligrosidad
+        } elseif ($probability <= 87.5) {
+            return ['lightred', '#FF6347']; // Muy alta baja peligrosidad
+        } else {
+            return ['darkred', '#8B0000']; // Muy alta peligrosidad
+        }
     }
 }

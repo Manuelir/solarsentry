@@ -17,7 +17,7 @@ class solarStatus {
     public $source_solar_cycle     = 'https://services.swpc.noaa.gov/json/solar-cycle/predicted-solar-cycle.json';
     //
     public $cache_file_solar_images = 'cache/solar_images_data.json';
-    public $source_solar_images     = 'https://sdo.gsfc.nasa.gov/assets/img/browse/';
+    public $source_solar_images     = 'https://sdo.gsfc.nasa.gov/assets/img/';
 
     // Datos de la prevision solar
     public $solar_data_activity;
@@ -427,41 +427,68 @@ class solarStatus {
 
         $this->load_cached_solar_images_data();
 
-        $year       = sprintf('%04d', (is_numeric($year)  ? $year  : date('Y')));
-        $month      = sprintf('%02d', (is_numeric($month) ? $month : date('m')));
-        $day        = sprintf('%02d', (is_numeric($day)   ? $day   : date('d')));
-        $hour       = sprintf('%02d', (is_numeric($hour)  ? $hour  : date('H')));
-        $filter     = ($filter     ? $filter     : '0171');
-        $resolution = ($resolution ? $resolution : '1024');
-        $date       = $year.$month.$day;
-
         if (!isset($this->solar_images_data)) { $this->solar_images_data = []; }
 
-        if (empty($this->solar_images_data['images'][$date][$resolution][$filter][$hour]) and $year.$month.$day.$hour === date('YmdH')) {
-            // Si en la hora actual aún no hay imágenes, se intenta mostrar la de la última hora disponible
-            if (     !empty($this->solar_images_data['images'][$date][$resolution][$filter])) {
-                      ksort($this->solar_images_data['images'][$date][$resolution][$filter]);
-                        end($this->solar_images_data['images'][$date][$resolution][$filter]);
-                $hour = key($this->solar_images_data['images'][$date][$resolution][$filter]);
-            } else if (   !empty($this->solar_images_data['images'])) {
-                           ksort($this->solar_images_data['images']);
-                             end($this->solar_images_data['images']);
-                $test_date = key($this->solar_images_data['images']);
-                if (      !empty($this->solar_images_data['images'][$test_date][$resolution][$filter])) {
-                           ksort($this->solar_images_data['images'][$test_date][$resolution][$filter]);
-                             end($this->solar_images_data['images'][$test_date][$resolution][$filter]);
-                    $hour  = key($this->solar_images_data['images'][$test_date][$resolution][$filter]);
-                    $date  = $test_date;
-                    $year  = substr($date, 0, 4);
-                    $month = substr($date, 4, 2);
-                    $day   = substr($date, 6, 2);
+        $refresh    = false;
+        $filter     = ($filter     ? $filter     : '0171');
+        $resolution = ($resolution ? $resolution : '1024');
+
+        $year       = (is_numeric($year)  ? $year  : 'last');
+        $month      = (is_numeric($month) ? $month : 'last');
+        $day        = (is_numeric($day)   ? $day   : 'last');
+        $hour       = (is_numeric($hour)  ? $hour  : 'last');
+
+        if ($year === 'last' and $month === 'last' and $day === 'last' and $hour === 'last') {
+
+            // Modo íltima imagen disponible
+            $mode = 'latest';
+
+            if (empty( $this->solar_images_data['date_last_updated']) or strtotime( $this->solar_images_data['date_last_updated']) <= strtotime('-1 hour')) {
+                // Hay que actualizar las últimas imágenes cada hora
+                $refresh = true;
+            }
+
+        } else {
+
+            // Modo imagen histórica concreta
+            $mode  = 'browser';
+            $year  = sprintf('%04d', (is_numeric($year)  ? $year  : date('Y')));
+            $month = sprintf('%02d', (is_numeric($month) ? $month : date('m')));
+            $day   = sprintf('%02d', (is_numeric($day)   ? $day   : date('d')));
+            $hour  = sprintf('%02d', (is_numeric($hour)  ? $hour  : date('H')));
+            $date  = $year.$month.$day;
+
+            if (empty($this->solar_images_data['images'][$date][$resolution][$filter][$hour]) and $year.$month.$day.$hour === date('YmdH')) {
+                // Si en la hora actual aún no hay imágenes, se intenta mostrar la de la última hora disponible
+                if (     !empty($this->solar_images_data['images'][$date][$resolution][$filter])) {
+                          ksort($this->solar_images_data['images'][$date][$resolution][$filter]);
+                            end($this->solar_images_data['images'][$date][$resolution][$filter]);
+                    $hour = key($this->solar_images_data['images'][$date][$resolution][$filter]);
+                } else if (   !empty($this->solar_images_data['images'])) {
+                               ksort($this->solar_images_data['images']);
+                                 end($this->solar_images_data['images']);
+                    $test_date = key($this->solar_images_data['images']);
+                    if (      !empty($this->solar_images_data['images'][$test_date][$resolution][$filter])) {
+                               ksort($this->solar_images_data['images'][$test_date][$resolution][$filter]);
+                                 end($this->solar_images_data['images'][$test_date][$resolution][$filter]);
+                        $hour  = key($this->solar_images_data['images'][$test_date][$resolution][$filter]);
+                        $date  = $test_date;
+                        $year  = substr($date, 0, 4);
+                        $month = substr($date, 4, 2);
+                        $day   = substr($date, 6, 2);
+                    }
                 }
+            }
+
+            if (empty($this->solar_images_data['images'][$date][$resolution][$filter][$hour]) and strtotime($year.'-'.$month.'-'.$day.' '.$hour.':00:00') < time()) {
+                // Si no existe el directorio temporal hay que añadirlo a la cache
+                $refresh = true;
             }
         }
 
-        if (empty($this->solar_images_data['images'][$date][$resolution][$filter][$hour]) and strtotime($year.'-'.$month.'-'.$day.' '.$hour.':00:00') < time()) {
+        if ($refresh) {
 
-            $url          = $this->source_solar_images.$year.'/'.$month.'/'.$day.'/';
+            $url          = $this->source_solar_images.$mode.'/';
             $html_content = $this->get_data_from_url($url);
 
             $this->solar_images_data['date_last_updated'] = date('Y-m-d H:i:s');
@@ -475,19 +502,35 @@ class solarStatus {
             $links = $dom->getElementsByTagName('a');
             // Iterate over each link to identify image files
             foreach ($links as $link) {
-                $href = $link->getAttribute('href');
+
+                $file_filter = '';
+                $href        = $link->getAttribute('href');
                 // Check if the file is an image (e.g., .jpg, .png)
                 if (preg_match('/\.(jpg|png)$/i', $href)) {
-                    // Extract information from the file name using regex
-                    if (preg_match('/^(\d{8})_(\d{6})_([^_]+)_([^_]+)\.\w+$/', $href, $matches)) {
-                        $file_date       = $matches[1]; // YearMonthDay
-                        $file_time       = $matches[2]; // HourMinuteSecond
-                        $file_hour       = substr($file_time, 0, 2);
-                        $file_minute     = substr($file_time, 2, 2);
-                        $file_resolution = $matches[3];
-                        $file_filter     = $matches[4];
-                        // Organize the images in the array
-                        $this->solar_images_data['images'][$file_date][$file_resolution][$file_filter][$file_hour][$file_minute] = $href;
+
+                    if ($mode === 'latest') {
+                        // Extract information from the file name using regex
+                        if (preg_match('/^latest_([^_]+)_([^_]+)\.\w+$/', $href, $matches)) {
+                            $file_resolution = $matches[1];
+                            $file_filter     = $matches[2];
+                            $this->solar_images_data[$mode][$file_resolution][$file_filter] = $href;
+                        }
+
+                    } else {
+
+                        if (preg_match('/^(\d{8})_(\d{6})_([^_]+)_([^_]+)\.\w+$/', $href, $matches)) {
+                            $file_date       = $matches[1]; // YearMonthDay
+                            $file_time       = $matches[2]; // HourMinuteSecond
+                            $file_hour       = substr($file_time, 0, 2);
+                            $file_minute     = substr($file_time, 2, 2);
+                            $file_resolution = $matches[3];
+                            $file_filter     = $matches[4];
+                            // Organize the images in the array
+                            $this->solar_images_data[$mode][$file_date][$file_resolution][$file_filter][$file_hour][$file_minute] = $href;
+                        }
+                    }
+
+                    if ($file_filter) {
                         // Add the filter and resolution to the list if they are not already there
                         if (!in_array($file_filter, $this->solar_images_data['filters_list'])) {
                             $this->solar_images_data['filters_list'][] = $file_filter;
@@ -504,8 +547,33 @@ class solarStatus {
 
         $images = [];
 
-        if (          isset($this->solar_images_data['images'][$date][$resolution][$filter][$hour])) {
-            $image  = reset($this->solar_images_data['images'][$date][$resolution][$filter][$hour]);
+        if ($mode === 'latest') {
+
+            if (!empty($this->solar_images_data[$mode][$resolution][$filter])) {
+                // Modo última imagen disponible
+                $images = [
+                    'date'       => date('Y-m-d'),
+                    'hour'       => date('H'),
+                    'filter'     => $filter,
+                    'resolution' => $resolution,
+                    'image'      => $this->source_solar_images.$mode.'/'.$this->solar_images_data[$mode][$resolution][$filter]
+                ];
+
+            } else {
+                // Error
+                $images = [
+                    'error'      => 1,
+                    'error_text' => 'No images found for the specified date and time.',
+                    'date'       => date('Y-m-d'),
+                    'hour'       => date('H'),
+                    'filter'     => $filter,
+                    'resolution' => $resolution
+                ];
+            }
+
+        } else if (   isset($this->solar_images_data[$mode][$date][$resolution][$filter][$hour])) {
+            // Modo imagen concreta
+            $image  = reset($this->solar_images_data[$mode][$date][$resolution][$filter][$hour]);
             $year   = substr($date, 0, 4);
             $month  = substr($date, 4, 2);
             $day    = substr($date, 6, 2);
@@ -514,10 +582,11 @@ class solarStatus {
                 'hour'       => $hour,
                 'filter'     => $filter,
                 'resolution' => $resolution,
-                'image'      => $this->source_solar_images.$year.'/'.$month.'/'.$day.'/'.$image
+                'image'      => $this->source_solar_images.$mode.'/'.$year.'/'.$month.'/'.$day.'/'.$image
             ];
-        } else {
 
+        } else {
+            // Error
             $images = [
                 'error'      => 1,
                 'error_text' => 'No images found for the specified date and time.',

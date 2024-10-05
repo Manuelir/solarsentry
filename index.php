@@ -6,7 +6,7 @@ $solarStatus = new solarStatus();
 
 $solarInfo   = $solarStatus->get_activity();
 $solarCycle  = $solarStatus->get_solar_cycle();
-$solarImages = $solarStatus->get_solar_images('last', 'last', 'last','last', '0171', 512);
+$solarImages = $solarStatus->get_solar_images('last', 'last', 'last','last', '0193', 512);
 
 $styleDangerLevel = "g1";
 switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {

@@ -15,11 +15,15 @@ class solarStatus {
     // Origen explicación: https://www.swpc.noaa.gov/products/predicted-sunspot-number-and-radio-flux
     public $cache_file_solar_cycle = 'solar_cycle_data.json';
     public $source_solar_cycle     = 'https://services.swpc.noaa.gov/json/solar-cycle/predicted-solar-cycle.json';
+    //
+    public $cache_file_solar_images = 'solar_imges_data.json';
+    public $source_solar_images     = 'https://sdo.gsfc.nasa.gov/assets/img/browse/';
 
     // Datos de la prevision solar
     public $solar_data_activity;
     public $solar_cycle_data;
     public $solar_alerts_data;
+    public $solar_images_data;
 
     function __construct () {
 
@@ -226,6 +230,26 @@ class solarStatus {
         if (!empty($file_content)) { file_put_contents($this->get_cache_file_solar_cycle(), $file_content); }
     }
 
+    function load_cached_solar_images_data () {
+
+        if ($this->mode_debbug) { return; }
+
+        if (empty($this->solar_images_data)) {
+
+            $file_path    = $this->get_cache_solar_images();
+            $file_content = (file_exists($file_path) ? file_get_contents($file_path) : '');
+
+            if (!empty($file_content)) { $this->solar_images_data = json_decode($file_content, true); }
+        }
+    }
+
+    function save_cached_solar_images_data () {
+
+        $file_content = json_encode($this->solar_images_data);
+
+        if (!empty($file_content)) { file_put_contents($this->get_cache_solar_images(), $file_content); }
+    }
+
     function get_solar_cycle () {
 
         $this->load_cached_solar_cycle_data();
@@ -246,6 +270,23 @@ class solarStatus {
     function get_cache_file_alerts () {
 
         return __DIR__.'/'.$this->cache_file_alerts;
+    }
+
+    function get_cache_solar_images () {
+
+        return __DIR__.'/'.$this->cache_file_solar_images;
+    }
+
+    // Función para obtener los datos de la URL
+    function get_data_from_url ($url) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
+        $res = curl_exec($ch);
+        curl_close($ch);
+        return $res;
     }
 
     function load_cached_alerts_data () {
@@ -280,6 +321,8 @@ class solarStatus {
 
             $file_content = file_get_contents($this->source_alerts);
             $data_alers   = json_decode($file_content, true);
+
+            if (!isset($this->solar_alerts_data)) { $this->solar_alerts_data = []; }
 
             $this->solar_alerts_data['date_last_updated'] = date('Y-m-d H:i:s');
             $this->solar_alerts_data['original_data']     = $data_alers;
@@ -346,5 +389,100 @@ class solarStatus {
         }
 
         return $alerts;
+    }
+
+    function get_solar_images ($year = 'last', $month = 'last', $day = 'last', $hour = 'last', $filter = '', $resolution = '') {
+
+        $this->load_cached_solar_images_data();
+
+        $year       = sprintf('%04d', (is_numeric($year)  ? $year  : date('Y')));
+        $month      = sprintf('%02d', (is_numeric($month) ? $month : date('m')));
+        $day        = sprintf('%02d', (is_numeric($day)   ? $day   : date('d')));
+        $hour       = sprintf('%02d', (is_numeric($hour)  ? $hour  : date('H')));
+        $filter     = ($filter     ? $filter     : '0171');
+        $resolution = ($resolution ? $resolution : '1024');
+        $date       = $year.$month.$day;
+
+        if (empty($this->solar_images_data['images'][$date][$resolution][$filter][$hour]) and $year.$month.$day.$hour === date('YmdH')) {
+            // Si en la hora actual aún no hay imágenes, se intenta mostrar la de la última hora disponible
+            if (     !empty($this->solar_images_data['images'][$date][$resolution][$filter])) {
+                        end($this->solar_images_data['images'][$date][$resolution][$filter]);
+                $hour = key($this->solar_images_data['images'][$date][$resolution][$filter]);
+            } else {
+                             end($this->solar_images_data['images']);
+                $test_date = key($this->solar_images_data['images']);
+                if (      !empty($this->solar_images_data['images'][$test_date][$resolution][$filter])) {
+                    $hour  = key($this->solar_images_data['images'][$test_date][$resolution][$filter]);
+                    $date  = $test_date;
+                    $year  = substr($date, 0, 4);
+                    $month = substr($date, 4, 2);
+                    $day   = substr($date, 6, 2);
+                }
+            }
+        }
+
+        if (empty($this->solar_images_data['images'][$date][$resolution][$filter][$hour]) and strtotime($year.'-'.$month.'-'.$day.' '.$hour.':00:00') < time()) {
+
+            $url          = $this->source_solar_images.$year.'/'.$month.'/'.$day.'/';
+            $html_content = $this->get_data_from_url($url);
+
+            if (!isset($this->solar_images_data)) { $this->solar_images_data = []; }
+
+            $this->solar_images_data['date_last_updated'] = date('Y-m-d H:i:s');
+
+            // Use DOMDocument to parse the HTML and extract the files from the directory
+            $dom = new DOMDocument();
+            @$dom->loadHTML($html_content);
+            $links = $dom->getElementsByTagName('a');
+            // Iterate over each link to identify image files
+            foreach ($links as $link) {
+                $href = $link->getAttribute('href');
+                // Check if the file is an image (e.g., .jpg, .png)
+                if (preg_match('/\.(jpg|png)$/i', $href)) {
+                    // Extract information from the file name using regex
+                    if (preg_match('/^(\d{8})_(\d{6})_([^_]+)_([^_]+)\.\w+$/', $href, $matches)) {
+                        $file_date       = $matches[1]; // YearMonthDay
+                        $file_time       = $matches[2]; // HourMinuteSecond
+                        $file_hour       = substr($file_time, 0, 2);
+                        $file_minute     = substr($file_time, 2, 2);
+                        $file_resolution = $matches[3];
+                        $file_filter     = $matches[4];
+                        // Organize the images in the array
+                        $this->solar_images_data['images'][$file_date][$file_resolution][$file_filter][$file_hour][$file_minute] = $href;
+                    }
+                }
+            }
+
+            $this->save_cached_solar_images_data();
+        }
+
+        $images = [];
+
+        if (          isset($this->solar_images_data['images'][$date][$resolution][$filter][$hour])) {
+            $image  = reset($this->solar_images_data['images'][$date][$resolution][$filter][$hour]);
+            $hour   = key  ($this->solar_images_data['images'][$date][$resolution][$filter][$hour]);
+            $year   = substr($date, 0, 4);
+            $month  = substr($date, 4, 2);
+            $day    = substr($date, 6, 2);
+            $images = [
+                'date'       => $year.'-'.$month.'-'.$day,
+                'hour'       => $hour,
+                'filter'     => $filter,
+                'resolution' => $resolution,
+                'image'      => $this->source_solar_images.$year.'/'.$month.'/'.$day.'/'.$image
+            ];
+        } else {
+
+            $images = [
+                'error'      => 1,
+                'error_text' => 'No images found for the specified date and time.',
+                'date'       => $year.'-'.$month.'-'.$day,
+                'hour'       => $hour,
+                'filter'     => $filter,
+                'resolution' => $resolution
+            ];
+        }
+
+        return $images;
     }
 }

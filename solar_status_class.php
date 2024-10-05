@@ -272,13 +272,14 @@ class solarStatus {
 
         $this->load_cached_alerts_data($from_date, $to_date);
 
+        $from_timestamp = (!empty($from_date) ? strtotime(is_numeric($from_date) ? date('Y-m-d h:i:s', $from_date) : $from_date) : strtotime('yesterday'));
+        $to_timestamp   = (!empty($to_date)   ? strtotime(is_numeric($to_date)   ? date('Y-m-d h:i:s', $to_date)   : $to_date)   : strtotime('tomorrow'));
+
         if (       empty($this->solar_alerts_data)
             or strtotime($this->solar_alerts_data['date_last_updated']) < strtotime('-1 day')) {
 
-            $from_timestamp = (!empty($from_date) ? strtotime(is_numeric($from_date) ? date('Y-m-d h:i:s', $from_date) : $from_date) : strtotime('yesterday'));
-            $to_timestamp   = (!empty($to_date)   ? strtotime(is_numeric($to_date)   ? date('Y-m-d h:i:s', $to_date)   : $to_date)   : strtotime('tomorrow'));
-            $file_content   = file_get_contents($this->source_alerts);
-            $data_alers     = json_decode($file_content, true);
+            $file_content = file_get_contents($this->source_alerts);
+            $data_alers   = json_decode($file_content, true);
 
             $this->solar_alerts_data['date_last_updated'] = date('Y-m-d H:i:s');
             $this->solar_alerts_data['original_data']     = $data_alers;

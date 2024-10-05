@@ -45,7 +45,7 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
 <body>
 <header></header>
 <main>
-	<h1>Solar Sentry</h1>
+	<h1 class="logo_header"><img src="images/solarsentry_logotexto_sombra.png" /></h1>
     <div class="capa_sol">
         <?php if (!empty($solarImages['image'])) { ?>
             <img src="<?php echo $solarImages['image'] ?>" class="back_sol" />

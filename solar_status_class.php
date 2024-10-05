@@ -63,8 +63,10 @@ class solarStatus {
             $file_content = preg_replace("/[\n\r]+/s", ' ', $file_content);
 
             // Inicializar un array para almacenar los datos extraídos
-            $this->solar_data_activity = [ 'date_last_updated' => date('Y-m-d H:i:s') ];
-
+            $this->solar_data_activity = [
+                'date_last_updated' => date('Y-m-d H:i:s'),
+                'source'            => $this->source
+            ];
 
             // 1. Actividad solar en las últimas 24 horas
             if (preg_match('/Solar activity has been at (.*?) levels for the past 24 hours./', $file_content, $matches)) {
@@ -258,8 +260,11 @@ class solarStatus {
             or strtotime($this->solar_cycle_data['date_last_updated']) > strtotime('-1 day')) {
 
             $file_content           = file_get_contents($this->source_solar_cycle);
-            $this->solar_cycle_data = json_decode($file_content, true);
-            $this->solar_cycle_data['date_last_updated'] = date('Y-m-d H:i:s');
+            $this->solar_cycle_data = [
+                'date_last_updated' => date('Y-m-d H:i:s'),
+                'source'            => $this->source_solar_cycle,
+                'predictions'       => json_decode($file_content, true)
+            ];
 
             $this->save_cached_solar_cycle_data();
         }
@@ -279,6 +284,7 @@ class solarStatus {
 
     // Función para obtener los datos de la URL
     function get_data_from_url ($url) {
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -330,7 +336,11 @@ class solarStatus {
             $this->save_cached_alerts_data();
         }
 
-        $alerts = [];
+        $alerts = [
+            'date_last_updated' => $this->solar_alerts_data['date_last_updated'],
+            'source'            => $this->source_alerts,
+            'messages'          => []
+        ];
 
         foreach ($this->solar_alerts_data['original_data'] as $alert) {
 
@@ -379,7 +389,7 @@ class solarStatus {
                 $message[$key] = (!empty($message[$key]) ? $message[$key]."\n\r" :  '').trim($match[3]);
             }
 
-            $alerts[] = [
+            $alerts['messages'][] = [
 
                 'datetime'   => $datetime,
                 'timestamp'  => $timestamp,

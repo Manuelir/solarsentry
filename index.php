@@ -7,6 +7,7 @@ $solarStatus = new solarStatus();
 $solarInfo   = $solarStatus->get_activity();
 $solarCycle  = $solarStatus->get_solar_cycle();
 $solarImages = $solarStatus->get_solar_images('last', 'last', 'last','last', '0193', 512);
+$solarEarthStatus  = $solarStatus->get_earth_status();
 
 $styleDangerLevel = "g1";
 switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
@@ -39,19 +40,23 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=2.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link rel="stylesheet" href="styles/styles.css" />
-<style>
-</style>
+
 </head>
 <body>
 <header></header>
 <main>
-	<h1 class="logo_header"><img src="images/solarsentry_logotexto_sombra.png" /></h1>
+	<h1 class="logo_header"><img src="images/solarguard_logotexto_sombra.png" /></h1>
     <div id="capa_central">
-		<div id="icono_alerta">ICONO</div>
+		<div id="icono_alerta"><i class="fa-duotone fa-solid fa-satellite-dish fa-2xl" style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff;"></i></div>
 		<div id="myModal" class="modal" style="display:none">
 		  <div class="modal-content">
 			<span class="close" onclick="cerrarModal()">&times;</span>
-			<p>Hola soy tu alerta</p>
+			<h2>RECOMMENDATIONS</h2>
+                <ul>
+                    <li>Unplug Electronic Devices</li>
+                    <li>Store the Vehicle in a Safe Place</li>
+                    <li>Back up importante data on external devices</li>
+                </ul>
 		  </div>
 		</div>
 
@@ -82,9 +87,13 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
 		
 		 <div id="capa_tierra__datos">
 			 <div class="circle">
-				<div class="franja franja1"></div>
-				<div class="franja franja2"></div>
-				<div class="franja franja3"></div>
+                <?php 
+                    $middleLatitudeColor = $solarEarthStatus['activity']['middle_latitudes'][0]['color_hexdec'];
+                    $highLatitudeColor = $solarEarthStatus['activity']['high_latitudes'][0]['color_hexdec'];    
+                ?>  
+				<div class="franja franja1" style="background-color:<?php echo $highLatitudeColor ?>;"></div>
+				<div class="franja franja2" style="background-color:<?php echo $middleLatitudeColor ?>;"></div>
+				<div class="franja franja3" style="background-color:<?php echo $highLatitudeColor ?>;"></div>
 			</div>    
         </div>
        
@@ -167,5 +176,6 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
 <script type="text/javascript" src="scripts/compartir.js" charset="UTF-8"></script>
 <script type="text/javascript" src="scripts/lanzar_camara.js" charset="UTF-8"></script>
         -->
+        <script src="https://kit.fontawesome.com/30c7ce764d.js" crossorigin="anonymous"></script>
 </body>
 </html>

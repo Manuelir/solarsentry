@@ -75,9 +75,14 @@ h1{font-size:3rem;color:#FFF;text-shadow:1px 1px 10px black;display:block;text-a
     background-color: white;
     padding: 20px;
     border-radius: 10px;
-    width: 300px;
+    width: 400px;
     text-align: center;
     position: relative;
+}
+
+.modal-content h2, .modal-content ul {
+    color: black;
+    margin: 20px;
 }
 
 /* Botón para cerrar el modal */
@@ -109,11 +114,11 @@ h1{font-size:3rem;color:#FFF;text-shadow:1px 1px 10px black;display:block;text-a
 .franja {
     width: 100%;
     height: 33.33%; /* Cada franja ocupa un tercio del círculo */
-	opacity:0.2
+	opacity: 0.6;
 }
 
 /* Colores diferentes para cada franja */
-.franja1 {
+/* .franja1 {
     background-color: red;
 }
 
@@ -123,4 +128,4 @@ h1{font-size:3rem;color:#FFF;text-shadow:1px 1px 10px black;display:block;text-a
 
 .franja3 {
     background-color: green;
-}
+} */

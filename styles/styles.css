@@ -7,21 +7,24 @@ SVG{fill:currentColor}
 .none{display:none}
 .contenido{margin:0 auto;max-width:var(--AnchoContenido);padding:5% var(--espaciox2)}
 .t20{font-size:2rem}.t15{font-size:1.5rem}.t14{font-size:1.4rem}.t13{font-size:1.3rem}.t12{font-size:1.2rem}
-
 .t09{font-size:.9rem}.t08{font-size:.8rem}.t07{font-size:.7rem}
 .cBlanco{color:#FFF}
 BODY{background:#000}
-BODY2{background:#000 url(https://api.solarsentry.earth/solar/imagenes/pantalla.png) center center fixed}
-MAIN{display:flex;flex-direction:column}
+MAIN{display:flex;flex-direction:column;max-width: 900px;margin: 0 auto;}
 footer{position: absolute;bottom: 0;width: 100%;}
 h1{font-size:3rem;color:#FFF;text-shadow:1px 1px 10px black;display:block;text-align: center;padding-bottom: 30px}
 .copyright{position:fixed;bottom:15px;color:#FFF;font-size:10px;font-weight:100;letter-spacing:.5px}
 
 
-.capa_sol{display: flex;justify-content: center;position:relative;flex-direction: column;align-items: center;height:80vh;color:#FFF}
-.capa_sol video{position: absolute;top: 0;z-index: -1;}
-.capa_sol_futuro{display:grid;grid-template-columns: 80px auto;}
-.capa_sol__datos{justify-content: center;display: flex; flex-direction: column; align-items: center; z-index: 1;width: 98dvw;}
+#capa_central{display: flex;justify-content: center;position:relative;flex-direction: column;align-items: center;color:#FFF}
+#capa_central video{position: absolute;top: 0;z-index: -1;}
+#capa_central img{position: absolute;top: 0;}
+#capa_central_futuro{display:grid;grid-template-columns: 80px auto;}
+#capa_central__datos{justify-content: center;display: flex; flex-direction: column; align-items: center; z-index: 100;width: 98dvw;}
+#capa_tierra__datos,#capa_sol__datos{z-index:100}
+#capa_tierra__datos{display:none}
+#capa_sol__datos_position{padding-top:150px}
+#icono_alerta{position: absolute; height:50px;width:50px; left: 10%; top: 10%;}
 .peligrosidad,.manchas,.velocidad{background: rgb(0 0 0 / 50%);padding:4px 8px;text-align:center;margin-bottom:10px;border-radius:4px}
 .capa_redes_sociales{display: flex;flex-direction: row;justify-content: space-around;padding: 6px 16px;color:#FFF}
 .capa_redes_sociales a{color:#fff;;display: contents;}
@@ -34,7 +37,90 @@ h1{font-size:3rem;color:#FFF;text-shadow:1px 1px 10px black;display:block;text-a
 /*FILTROS*/
 .g1{filter: hue-rotate(16deg);}
 .g4, .g5{filter:hue-rotate(329deg)}
-.back_sol { position: absolute; }
-.back_tierra { position: absolute; height: 20%; right: 10%; top: 10%;}
+.tMini { position: absolute; height:100px;width:100px; right: 10%; top: 10%;}
 .logo_header { display: flex; justify-content: center; align-items: center; }
 .logo_header img { padding-top: 40px; width: 500px; margin: 0 auto; }
+
+
+
+
+/* Estilos para el div clicable */
+.clickableDiv {
+    padding: 20px;
+    background-color: lightblue;
+    text-align: center;
+    width: 200px;
+    cursor: pointer;
+    margin: 50px auto;
+    border-radius: 8px;
+}
+
+/* Estilos para el modal */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed; /* Fijo en la pantalla */
+    z-index: 1000; /* Encima de todo */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Contenido del modal */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+    position: relative;
+}
+
+/* Botón para cerrar el modal */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: black;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+
+
+/* Estilo para crear el círculo */
+.circle {
+    width: 600px;
+    height: 600px;
+    border-radius: 50%; /* Hace el div circular */
+    display: flex;
+    flex-direction: column; /* Las franjas se colocarán una debajo de otra */
+    justify-content: space-between; /* Distribuye las franjas uniformemente */
+    overflow: hidden; /* Asegura que las franjas no salgan del borde del círculo */
+}
+
+/* Estilo común para las franjas */
+.franja {
+    width: 100%;
+    height: 33.33%; /* Cada franja ocupa un tercio del círculo */
+	opacity:0.2
+}
+
+/* Colores diferentes para cada franja */
+.franja1 {
+    background-color: red;
+}
+
+.franja2 {
+    background-color: white;
+}
+
+.franja3 {
+    background-color: green;
+}

@@ -46,43 +46,92 @@ switch (strtolower($solarInfo['solar_activity_last_24_hours'])) {
 <header></header>
 <main>
 	<h1 class="logo_header"><img src="images/solarsentry_logotexto_sombra.png" /></h1>
-    <div class="capa_sol">
+    <div id="capa_central">
+		<div id="icono_alerta">ICONO</div>
+		<div id="myModal" class="modal" style="display:none">
+		  <div class="modal-content">
+			<span class="close" onclick="cerrarModal()">&times;</span>
+			<p>Hola soy tu alerta</p>
+		  </div>
+		</div>
+
         <?php if (!empty($solarImages['image'])) { ?>
-            <img src="<?php echo $solarImages['image'] ?>" class="back_sol" id="sol" />
-            <img onclick="intercambiarContenido()" src="./images/tierra_girando.gif" class="back_tierra" id="tierra" />
+		
+            <img src="<?php echo $solarImages['image'] ?>" id="sol" width="600px" height="600px" />
+            <img onclick="intercambiarContenido()" src="./images/tierra_girando.gif" id="tierra" width="550px" height="550px" class="tMini"/>
         <?php } else { ?>
-            <video src="sol.mp4" autoplay="true" muted="true" loop="true" class="<?php echo $styleDangerLevel;?>"></video>
+            <video src="sol.mp4" autoplay="true" muted="true" loop="true" class="<?php echo $styleDangerLevel;?>" width="600px" height="600px"></video>
         <?php } ?>
-        <div class="capa_sol__datos">
-            <div class="velocidad">
-                <div >Solar wind speed</div>
-                <div class="t20"><?php echo $solarInfo['solar_wind_speed']['speed']; ?> km/s</div>
-            </div>
-            <div class="manchas">
-                <div>Sunspots</div><div class="t13"></div>
-                <div class="t20"><?php echo  $solarInfo['number_sunspot_regions'];?></div>
-            </div>
-            <div class="peligrosidad">
-                <div>Danger level</div>
-                <div class="t20"><?php echo $solarInfo['solar_activity_last_24_hours'] ?></div>
+		 <div id="capa_sol__datos">
+			 
+			 <div id="capa_sol__datos_position">
+				<div class="velocidad">
+					<div>Solar wind speed</div>
+					<div class="t20"><?php echo $solarInfo['solar_wind_speed']['speed']; ?> km/s</div>
+				</div>
+				<div class="manchas">
+					<div>Sunspots</div><div class="t13"></div>
+					<div class="t20"><?php echo  $solarInfo['number_sunspot_regions'];?></div>
+				</div>
+				<div class="peligrosidad">
+					<div>Danger level</div>
+					<div class="t20"><?php echo $solarInfo['solar_activity_last_24_hours'] ?></div>
+				 </div>
             </div>
         </div>
+		
+		 <div id="capa_tierra__datos">
+			 <div class="circle">
+				<div class="franja franja1"></div>
+				<div class="franja franja2"></div>
+				<div class="franja franja3"></div>
+			</div>    
+        </div>
+       
+		
     </div>
 
     <script>
+	// Función para abrir el modal
+	document.getElementById('icono_alerta').onclick = function() {
+		document.getElementById('myModal').style.display = 'flex';
+	}
+
+	// Función para cerrar el modal
+	function cerrarModal() {
+		document.getElementById('myModal').style.display = 'none';
+	}
+
+		
     function intercambiarContenido() {
-        console.log('hey')
-            const img1 = document.getElementById('sol');
-            const img2 = document.getElementById('tierra');
-            const tempSrc = img1.src;
-            img1.src = img2.src;
-            img1.style.height = '80%';
-            img2.src = tempSrc;
+    console.log('Intercambiando imágenes y capas...');
+    
+    const img1 = document.getElementById('sol');
+    const img2 = document.getElementById('tierra');
+    const capaSol = document.getElementById('capa_sol__datos');
+    const capaTierra = document.getElementById('capa_tierra__datos');
+    
+    if (img1 && img2 && capaSol && capaTierra) {
+        // Intercambiar las imágenes
+        const tempSrc = img1.src;
+        img1.src = img2.src;
+        img2.src = tempSrc;
+
+        // Intercambiar el contenido de las capas
+        const tempCapa = capaSol.innerHTML;
+        capaSol.innerHTML = capaTierra.innerHTML;
+        capaTierra.innerHTML = tempCapa;
+        
+        console.log('Intercambio realizado con éxito.');
+    } else {
+        console.error("Uno o más elementos no fueron encontrados.");
     }
+}
     </script>
 
 </main>
 <footer>
+	
 <div class=" cBlanco t15" style="text-align:center">
     </div>
     <div class="capa_coordenadas cBlanco t07">
